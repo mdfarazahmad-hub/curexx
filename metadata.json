@@ -1,0 +1,6 @@
+{
+  "name": "CureX - Healthcare Super-App",
+  "description": "Comprehensive healthcare super-app featuring patient appointments, digital health wallet, doctor clinical workspace, and hospital command centre.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
