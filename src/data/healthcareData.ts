@@ -1,4 +1,18 @@
-import { Doctor, Appointment, HealthMetric, FamilyMember, HealthRecord, PatientQueueItem, CriticalInventoryItem } from '../types';
+import {
+  Doctor,
+  Appointment,
+  HealthMetric,
+  FamilyMember,
+  HealthRecord,
+  PatientQueueItem,
+  CriticalInventoryItem,
+  Payment,
+  InsurancePolicy,
+  Medicine,
+  MedicineOrder,
+  DiagnosticTest,
+  DiagnosticBooking
+} from '../types';
 
 export const CUREX_LOGO = "https://lh3.googleusercontent.com/aida-public/AB6AXuC27gM2XrHMrDsDeWcKwrJOc5QOaF1HImQJRYIEP1zaJj_5U-iZ69BOrIJrxJEAlzTvF7oclulGmXOqyZucQfK0mrnBGpXF3K7aQ8r6_p9oVqcFsr7RXMICvh5T1gAR3nTHTV4KUoxaRl-WYTLlES4zu1Xh2MGpJTk5BDc2Adj-GDaGTKFRhKfoL-xfQetHLx4lzR5YtWIT4On4eQv37JhvRH5C9uG7o5YyNwBFsAT8Ke4UIOb3k3bf";
 
@@ -296,3 +310,334 @@ export const INITIAL_INVENTORY_ALERTS: CriticalInventoryItem[] = [
     icon: 'masks'
   }
 ];
+
+export const INITIAL_PAYMENTS: Payment[] = [
+  {
+    id: 'pay-1',
+    amount: 500.0,
+    date: '2023-10-27',
+    type: 'Consultation',
+    status: 'Success',
+    invoiceNumber: 'INV-2023-1089',
+    provider: 'Dr. Ananya Sharma (Cardiology OPD)',
+    description: 'Follow-up Cardiology Consultation & ECG Evaluation',
+    paymentMethod: 'UPI • Google Pay'
+  },
+  {
+    id: 'pay-2',
+    amount: 1250.0,
+    date: '2023-10-25',
+    type: 'Medicine',
+    status: 'Success',
+    invoiceNumber: 'INV-2023-1064',
+    provider: 'CureX Pharmacy Hub #04',
+    description: 'Prescription Order: Telmisartan 40mg + Atorvastatin 10mg (30-day supply)',
+    paymentMethod: 'HDFC Credit Card ending in 4082'
+  },
+  {
+    id: 'pay-3',
+    amount: 850.0,
+    date: '2023-10-20',
+    type: 'Lab Test',
+    status: 'Success',
+    invoiceNumber: 'INV-2023-0982',
+    provider: 'ABC Diagnostics Central Lab',
+    description: 'Complete Blood Count (CBC) & Fasting Blood Sugar Test',
+    paymentMethod: 'CureX Health Wallet'
+  },
+  {
+    id: 'pay-4',
+    amount: 350.0,
+    date: '2023-10-14',
+    type: 'Consultation',
+    status: 'Success',
+    invoiceNumber: 'INV-2023-0911',
+    provider: 'Dr. Rajesh Kumar (General Medicine)',
+    description: 'Telehealth Video Consultation for Seasonal Flu',
+    paymentMethod: 'UPI • PhonePe'
+  },
+  {
+    id: 'pay-5',
+    amount: 2100.0,
+    date: '2023-10-08',
+    type: 'Lab Test',
+    status: 'Success',
+    invoiceNumber: 'INV-2023-0854',
+    provider: 'ABC Diagnostics Central Lab',
+    description: 'Comprehensive Lipid Profile & Liver Function Test (LFT)',
+    paymentMethod: 'Debit Card ending in 1928'
+  },
+  {
+    id: 'pay-6',
+    amount: 450.0,
+    date: '2023-11-01',
+    type: 'Consultation',
+    status: 'Pending',
+    invoiceNumber: 'INV-2023-1120',
+    provider: 'Dr. Vikram Patel (Pediatric OPD)',
+    description: 'Upcoming Wellness & Developmental Follow-up',
+    paymentMethod: 'Pending Payment'
+  }
+];
+
+export const INITIAL_INSURANCE_POLICY: InsurancePolicy = {
+  id: 'pol-cx-99210',
+  policyNumber: 'CX-99210-STAR-HLTH',
+  provider: 'Star Health Premier Platinum',
+  holderName: 'Eleanor Vance',
+  planName: 'Family Health Shield 360',
+  sumInsured: 500000,
+  remainingCashless: 462500,
+  validTill: '31 Dec 2026',
+  status: 'Active',
+  tpaHelpline: '1800-425-2255',
+  claims: [
+    {
+      id: 'clm-01',
+      claimNumber: 'CLM-2023-7741',
+      hospital: 'ABC Multispeciality Hospital',
+      treatment: 'Cardiac Stress Test & 2D Echo Screening',
+      amount: 14500,
+      status: 'Settled',
+      date: '15 Sep 2023',
+      cashless: true,
+      notes: '100% cashless pre-authorization approved by TPA desk.'
+    },
+    {
+      id: 'clm-02',
+      claimNumber: 'CLM-2023-8890',
+      hospital: 'ABC Multispeciality Hospital',
+      treatment: 'Day Care Observation & Emergency IV Therapy',
+      amount: 23000,
+      status: 'Approved',
+      date: '04 Oct 2023',
+      cashless: true,
+      notes: 'Final settlement sanction letter issued. Hospital notified.'
+    },
+    {
+      id: 'clm-03',
+      claimNumber: 'CLM-2023-9214',
+      hospital: 'Metro Vision Centre',
+      treatment: 'Retinal Fundus Fluorescein Angiography',
+      amount: 8200,
+      status: 'In Review',
+      date: '22 Oct 2023',
+      cashless: false,
+      notes: 'Reimbursement claim documents submitted and undergoing medical audit.'
+    }
+  ]
+};
+
+export const INITIAL_MEDICINES: Medicine[] = [
+  {
+    id: 'med-1',
+    name: 'Telmisartan 40mg',
+    genericName: 'Telmisartan Tablets IP',
+    dosage: '40 mg • 1 tablet daily',
+    manufacturer: 'Sun Pharma Ltd.',
+    price: 180,
+    mrp: 220,
+    inStock: true,
+    prescriptionRequired: true,
+    category: 'Cardiac',
+    description: 'Angiotensin II receptor antagonist used for essential hypertension management.',
+    packSize: 'Strip of 15 tablets'
+  },
+  {
+    id: 'med-2',
+    name: 'Atorvastatin 10mg (Atorva)',
+    genericName: 'Atorvastatin Calcium IP',
+    dosage: '10 mg • At bedtime',
+    manufacturer: 'Zydus Cadila',
+    price: 145,
+    mrp: 175,
+    inStock: true,
+    prescriptionRequired: true,
+    category: 'Cardiac',
+    description: 'HMG-CoA reductase inhibitor for reducing LDL cholesterol and cardiovascular risk.',
+    packSize: 'Strip of 10 tablets'
+  },
+  {
+    id: 'med-3',
+    name: 'Metformin 500mg SR (Glycomet)',
+    genericName: 'Metformin Hydrochloride Prolonged Release',
+    dosage: '500 mg • Twice daily after meals',
+    manufacturer: 'USV Private Limited',
+    price: 65,
+    mrp: 85,
+    inStock: true,
+    prescriptionRequired: true,
+    category: 'Diabetic',
+    description: 'First-line anti-hyperglycemic biguanide medication for Type 2 diabetes.',
+    packSize: 'Strip of 20 tablets'
+  },
+  {
+    id: 'med-4',
+    name: 'Augmentin 625 Duo',
+    genericName: 'Amoxicillin & Potassium Clavulanate',
+    dosage: '625 mg • 1 tablet every 12 hrs',
+    manufacturer: 'GSK Pharmaceuticals',
+    price: 210,
+    mrp: 250,
+    inStock: true,
+    prescriptionRequired: true,
+    category: 'Antibiotics',
+    description: 'Broad-spectrum bactericidal penicillin antibiotic enhanced with beta-lactamase inhibitor.',
+    packSize: 'Strip of 10 tablets'
+  },
+  {
+    id: 'med-5',
+    name: 'Paracetamol 650mg (Dolo 650)',
+    genericName: 'Paracetamol Tablets IP',
+    dosage: '650 mg • As needed for fever/pain',
+    manufacturer: 'Micro Labs Ltd',
+    price: 35,
+    mrp: 42,
+    inStock: true,
+    prescriptionRequired: false,
+    category: 'Pain Relief',
+    description: 'Fast-acting antipyretic and analgesic for headache, fever, and muscle aches.',
+    packSize: 'Strip of 15 tablets'
+  },
+  {
+    id: 'med-6',
+    name: 'Vitamin D3 60,000 IU (Uprise-D3)',
+    genericName: 'Cholecalciferol Chewable Capsule',
+    dosage: '60,000 IU • 1 softgel weekly',
+    manufacturer: 'Alkem Laboratories',
+    price: 120,
+    mrp: 155,
+    inStock: true,
+    prescriptionRequired: false,
+    category: 'Vitamins',
+    description: 'High-potency vitamin D3 for bone mineralization, immune function, and vitality.',
+    packSize: 'Box of 4 softgels'
+  }
+];
+
+export const INITIAL_MEDICINE_ORDERS: MedicineOrder[] = [
+  {
+    id: 'ord-8831',
+    orderNumber: 'CX-MED-8831',
+    items: [
+      { medicine: INITIAL_MEDICINES[0], quantity: 2 },
+      { medicine: INITIAL_MEDICINES[1], quantity: 1 }
+    ],
+    totalAmount: 505,
+    status: 'Out for Delivery',
+    orderDate: 'Today, 09:15 AM',
+    estimatedDelivery: 'Within 35 mins (by 11:30 AM)',
+    deliveryAddress: 'Apt 4B, Emerald Residency, Sector 62',
+    riderName: 'Ramesh Verma (CureX Express)',
+    riderPhone: '+91 98765 43210',
+    step: 3
+  },
+  {
+    id: 'ord-7920',
+    orderNumber: 'CX-MED-7920',
+    items: [
+      { medicine: INITIAL_MEDICINES[4], quantity: 1 },
+      { medicine: INITIAL_MEDICINES[5], quantity: 2 }
+    ],
+    totalAmount: 275,
+    status: 'Delivered',
+    orderDate: '22 Oct 2023',
+    estimatedDelivery: 'Delivered on time',
+    deliveryAddress: 'Apt 4B, Emerald Residency, Sector 62',
+    riderName: 'Amit Singh',
+    riderPhone: '+91 98111 22334',
+    step: 4
+  }
+];
+
+export const INITIAL_DIAGNOSTIC_TESTS: DiagnosticTest[] = [
+  {
+    id: 'diag-cbc',
+    title: 'Complete Blood Count (CBC) with ESR',
+    code: 'TEST-CBC-01',
+    category: 'Hematology',
+    sampleType: 'Whole Blood (EDTA)',
+    fastingRequired: false,
+    reportHours: 6,
+    price: 380,
+    originalPrice: 550,
+    popular: true,
+    parametersCount: 24,
+    description: 'Evaluates overall health status; checks for anemia, infection, leukemia, and platelet disorders.'
+  },
+  {
+    id: 'diag-lipid',
+    title: 'Comprehensive Lipid Panel (Cholesterol)',
+    code: 'TEST-LIPID-02',
+    category: 'Cardiovascular',
+    sampleType: 'Serum Blood',
+    fastingRequired: true,
+    fastingHours: 12,
+    reportHours: 8,
+    price: 650,
+    originalPrice: 900,
+    popular: true,
+    parametersCount: 8,
+    description: 'Measures Total Cholesterol, HDL, LDL, VLDL, and Triglycerides to calculate heart attack risk.'
+  },
+  {
+    id: 'diag-hba1c',
+    title: 'HbA1c (Glycated Hemoglobin) 3-Month Glucose',
+    code: 'TEST-HBA1C-03',
+    category: 'Diabetic Health',
+    sampleType: 'Whole Blood',
+    fastingRequired: false,
+    reportHours: 6,
+    price: 490,
+    originalPrice: 700,
+    popular: true,
+    parametersCount: 2,
+    description: 'Gold standard test reflecting average blood sugar control over the previous 90 to 120 days.'
+  },
+  {
+    id: 'diag-thyroid',
+    title: 'Thyroid Profile Total (T3, T4, TSH)',
+    code: 'TEST-THY-04',
+    category: 'Endocrinology',
+    sampleType: 'Serum Blood',
+    fastingRequired: true,
+    fastingHours: 10,
+    reportHours: 12,
+    price: 520,
+    originalPrice: 780,
+    popular: false,
+    parametersCount: 3,
+    description: 'Screens for hyperthyroidism and hypothyroidism, assessing metabolic equilibrium.'
+  },
+  {
+    id: 'diag-fullbody',
+    title: 'CureX Master Whole Body Health Package',
+    code: 'PKG-MASTER-05',
+    category: 'Full Body Wellness',
+    sampleType: 'Blood & Urine',
+    fastingRequired: true,
+    fastingHours: 12,
+    reportHours: 24,
+    price: 1999,
+    originalPrice: 4200,
+    popular: true,
+    parametersCount: 78,
+    description: 'Includes CBC, Liver (LFT), Kidney (KFT), Lipid, Thyroid, HbA1c, Vitamin D3, B12, Urine Routine.'
+  }
+];
+
+export const INITIAL_DIAGNOSTIC_BOOKINGS: DiagnosticBooking[] = [
+  {
+    id: 'bk-diag-101',
+    bookingRef: 'CX-LAB-2023-101',
+    test: INITIAL_DIAGNOSTIC_TESTS[0],
+    patientName: 'Eleanor Vance',
+    date: 'Tomorrow, 08:00 AM',
+    timeSlot: '08:00 AM - 09:00 AM',
+    homeCollection: true,
+    address: 'Apt 4B, Emerald Residency, Sector 62',
+    status: 'Phlebotomist Assigned',
+    amount: 380
+  }
+];
+

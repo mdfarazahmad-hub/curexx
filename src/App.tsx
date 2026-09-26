@@ -31,6 +31,11 @@ import { RescheduleModal } from './components/modals/RescheduleModal';
 import { SosModal } from './components/modals/SosModal';
 import { LocationPickerModal } from './components/modals/LocationPickerModal';
 import { VirtualQueueModal } from './components/modals/VirtualQueueModal';
+import { PaymentHistoryModal } from './components/modals/PaymentHistoryModal';
+import { InsuranceModal } from './components/modals/InsuranceModal';
+import { PharmacyModal } from './components/modals/PharmacyModal';
+import { DiagnosticsModal } from './components/modals/DiagnosticsModal';
+import { FamilyCircleModal } from './components/modals/FamilyCircleModal';
 import { usePatientLocation } from './hooks/usePatientLocation';
 import { useVirtualQueue } from './hooks/useVirtualQueue';
 
@@ -40,9 +45,29 @@ import {
   INITIAL_CANCELLED_APPOINTMENTS,
   INITIAL_HEALTH_RECORDS,
   INITIAL_PATIENT_QUEUE,
+  INITIAL_PAYMENTS,
+  INITIAL_INSURANCE_POLICY,
+  INITIAL_MEDICINES,
+  INITIAL_MEDICINE_ORDERS,
+  INITIAL_DIAGNOSTIC_TESTS,
+  INITIAL_DIAGNOSTIC_BOOKINGS,
+  FAMILY_PROFILES,
 } from './data/healthcareData';
 
-import { ScreenTab, Appointment, HealthRecord, PatientQueueItem } from './types';
+import {
+  ScreenTab,
+  Appointment,
+  HealthRecord,
+  PatientQueueItem,
+  Payment,
+  InsurancePolicy,
+  InsuranceClaim,
+  Medicine,
+  MedicineOrder,
+  DiagnosticTest,
+  DiagnosticBooking,
+  FamilyMember,
+} from './types';
 
 export default function App() {
   // Authentication State: null means showing the dual login panel initially!
@@ -105,6 +130,25 @@ export default function App() {
   const [isSosModalOpen, setIsSosModalOpen] = useState(false);
   const [isNotificationsOpen, setIsNotificationsOpen] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
+
+  // CureX Core Android Super-App Modules State
+  const [payments, setPayments] = useState<Payment[]>(INITIAL_PAYMENTS);
+  const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
+
+  const [insurancePolicy, setInsurancePolicy] = useState<InsurancePolicy>(INITIAL_INSURANCE_POLICY);
+  const [isInsuranceModalOpen, setIsInsuranceModalOpen] = useState(false);
+
+  const [medicines, setMedicines] = useState<Medicine[]>(INITIAL_MEDICINES);
+  const [medicineOrders, setMedicineOrders] = useState<MedicineOrder[]>(INITIAL_MEDICINE_ORDERS);
+  const [isPharmacyModalOpen, setIsPharmacyModalOpen] = useState(false);
+
+  const [diagnosticTests, setDiagnosticTests] = useState<DiagnosticTest[]>(INITIAL_DIAGNOSTIC_TESTS);
+  const [diagnosticBookings, setDiagnosticBookings] = useState<DiagnosticBooking[]>(INITIAL_DIAGNOSTIC_BOOKINGS);
+  const [isDiagnosticsModalOpen, setIsDiagnosticsModalOpen] = useState(false);
+
+  const [familyMembers, setFamilyMembers] = useState<FamilyMember[]>(FAMILY_PROFILES);
+  const [activeFamilyMemberId, setActiveFamilyMemberId] = useState<string>(FAMILY_PROFILES[0]?.id || 'fam-1');
+  const [isFamilyModalOpen, setIsFamilyModalOpen] = useState(false);
 
   const [savedPatient, setSavedPatient] = useState<AuthUser | null>(null);
   const [savedDoctor, setSavedDoctor] = useState<AuthUser | null>(null);
@@ -202,33 +246,130 @@ export default function App() {
         break;
       case 'medicines':
       case 'prescriptions':
-        setActiveTab('health');
+        setIsPharmacyModalOpen(true);
         break;
       case 'family':
-        alert('Family Care Plan active: 4 members linked. Dad (68), Priya (38), Aarav (10).');
+        setIsFamilyModalOpen(true);
         break;
       case 'insurance':
-        alert('Star Health Premier Policy #CX-99210: Active coverage $500,000.');
+        setIsInsuranceModalOpen(true);
         break;
       case 'payments':
-        alert('CureX Pay Wallet Balance: $0.00 due. Last payment to ABC Multispeciality: $45.00 (Copay).');
+        setIsPaymentModalOpen(true);
         break;
       case 'diagnostics':
-        setIsReportModalOpen(true);
+        setIsDiagnosticsModalOpen(true);
         break;
       default:
         break;
     }
   };
 
+  const handlePayPendingBill = (paymentId: string) => {
+    setPayments((prev) =>
+      prev.map((p) =>
+        p.id === paymentId
+          ? { ...p, status: 'Success', paymentMethod: 'UPI • Instant Verified' }
+          : p
+      )
+    );
+  };
+
+  const handleSubmitNewClaim = (claimData: Omit<InsuranceClaim, 'id' | 'claimNumber' | 'status' | 'date'>) => {
+    const newClaim: InsuranceClaim = {
+      id: `clm-${Date.now()}`,
+      claimNumber: `CLM-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`,
+      status: 'In Review',
+      date: 'Today',
+      ...claimData,
+    };
+    setInsurancePolicy((prev) => ({
+      ...prev,
+      claims: [newClaim, ...prev.claims],
+    }));
+  };
+
+  const handlePlaceMedicineOrder = (items: { medicine: Medicine; quantity: number }[], deliveryAddress: string) => {
+    const total = items.reduce((sum, item) => sum + item.medicine.price * item.quantity, 0);
+    const newOrder: MedicineOrder = {
+      id: `ord-${Date.now()}`,
+      orderNumber: `CX-MED-${Math.floor(1000 + Math.random() * 9000)}`,
+      items,
+      totalAmount: total,
+      status: 'Placed',
+      orderDate: 'Just now',
+      estimatedDelivery: 'Within 45 mins',
+      deliveryAddress,
+      riderName: 'Ramesh Verma (CureX Express)',
+      riderPhone: '+91 98765 43210',
+      step: 1,
+    };
+    setMedicineOrders((prev) => [newOrder, ...prev]);
+
+    // Record verified transaction in Payment History
+    const newPayment: Payment = {
+      id: `pay-${Date.now()}`,
+      amount: total,
+      date: new Date().toISOString().split('T')[0],
+      type: 'Medicine',
+      status: 'Success',
+      invoiceNumber: `INV-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`,
+      provider: 'CureX Pharmacy Express',
+      description: `Doorstep Medicine Delivery (${items.length} items)`,
+      paymentMethod: 'CureX Instant Pay'
+    };
+    setPayments((prev) => [newPayment, ...prev]);
+  };
+
+  const handleBookDiagnosticTest = (
+    test: DiagnosticTest,
+    date: string,
+    timeSlot: string,
+    homeCollection: boolean,
+    address: string
+  ) => {
+    const newBooking: DiagnosticBooking = {
+      id: `bk-${Date.now()}`,
+      bookingRef: `CX-LAB-${Math.floor(1000 + Math.random() * 9000)}`,
+      test,
+      patientName: currentUser?.name || 'Eleanor Vance',
+      date,
+      timeSlot,
+      homeCollection,
+      address,
+      status: 'Confirmed',
+      amount: test.price,
+    };
+    setDiagnosticBookings((prev) => [newBooking, ...prev]);
+
+    // Record in Payment History
+    const newPayment: Payment = {
+      id: `pay-${Date.now()}`,
+      amount: test.price,
+      date: new Date().toISOString().split('T')[0],
+      type: 'Lab Test',
+      status: 'Success',
+      invoiceNumber: `INV-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`,
+      provider: 'CureX Diagnostics Lab Network',
+      description: `${test.title} (Home Collection)`,
+      paymentMethod: 'Prepaid Digital Voucher'
+    };
+    setPayments((prev) => [newPayment, ...prev]);
+  };
+
+  const handleAddFamilyMember = (newMem: Omit<FamilyMember, 'id'>) => {
+    const member: FamilyMember = {
+      id: `fam-${Date.now()}`,
+      ...newMem,
+    };
+    setFamilyMembers((prev) => [...prev, member]);
+  };
+
   const handleSelectFamilyMember = (memberId: string) => {
     if (memberId === 'new') {
-      const name = window.prompt('Enter family member name (e.g. Grandma, Sister):');
-      if (name) {
-        alert(`Invitation sent to ${name} to join your CureX family health circle.`);
-      }
+      setIsFamilyModalOpen(true);
     } else {
-      alert(`Switching view to member profile: ${memberId.toUpperCase()}`);
+      setActiveFamilyMemberId(memberId);
     }
   };
 
@@ -558,6 +699,46 @@ export default function App() {
         onDeferToken={virtualQueue.deferToken}
         onToggleSound={() => virtualQueue.setSoundEnabled(!virtualQueue.soundEnabled)}
         onToggleAutoAdvance={() => virtualQueue.setIsAutoAdvancing(!virtualQueue.isAutoAdvancing)}
+      />
+
+      {/* CureX Android Port Modals */}
+      <PaymentHistoryModal
+        isOpen={isPaymentModalOpen}
+        onClose={() => setIsPaymentModalOpen(false)}
+        payments={payments}
+        onPayPendingBill={handlePayPendingBill}
+      />
+
+      <InsuranceModal
+        isOpen={isInsuranceModalOpen}
+        onClose={() => setIsInsuranceModalOpen(false)}
+        policy={insurancePolicy}
+        onSubmitNewClaim={handleSubmitNewClaim}
+      />
+
+      <PharmacyModal
+        isOpen={isPharmacyModalOpen}
+        onClose={() => setIsPharmacyModalOpen(false)}
+        medicines={medicines}
+        orders={medicineOrders}
+        onPlaceOrder={handlePlaceMedicineOrder}
+      />
+
+      <DiagnosticsModal
+        isOpen={isDiagnosticsModalOpen}
+        onClose={() => setIsDiagnosticsModalOpen(false)}
+        tests={diagnosticTests}
+        bookings={diagnosticBookings}
+        onBookTest={handleBookDiagnosticTest}
+      />
+
+      <FamilyCircleModal
+        isOpen={isFamilyModalOpen}
+        onClose={() => setIsFamilyModalOpen(false)}
+        members={familyMembers}
+        activeMemberId={activeFamilyMemberId}
+        onSelectMember={setActiveFamilyMemberId}
+        onAddMember={handleAddFamilyMember}
       />
     </div>
   );

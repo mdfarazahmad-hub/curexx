@@ -137,3 +137,103 @@ export interface VirtualQueueData {
   tokens: VirtualQueueToken[];
 }
 
+export interface Payment {
+  id: string;
+  amount: number;
+  date: string;
+  type: 'Consultation' | 'Medicine' | 'Lab Test' | 'Emergency' | string;
+  status: 'Success' | 'Pending' | 'Refunded';
+  invoiceNumber: string;
+  provider: string;
+  description: string;
+  paymentMethod: string;
+}
+
+export interface InsuranceClaim {
+  id: string;
+  claimNumber: string;
+  hospital: string;
+  treatment: string;
+  amount: number;
+  status: 'Approved' | 'In Review' | 'Settled' | 'Rejected';
+  date: string;
+  cashless: boolean;
+  notes?: string;
+}
+
+export interface InsurancePolicy {
+  id: string;
+  policyNumber: string;
+  provider: string;
+  holderName: string;
+  planName: string;
+  sumInsured: number;
+  remainingCashless: number;
+  validTill: string;
+  status: 'Active' | 'Expiring Soon';
+  tpaHelpline: string;
+  claims: InsuranceClaim[];
+}
+
+export interface Medicine {
+  id: string;
+  name: string;
+  genericName: string;
+  dosage: string;
+  manufacturer: string;
+  price: number;
+  mrp: number;
+  inStock: boolean;
+  prescriptionRequired: boolean;
+  category: 'Cardiac' | 'Antibiotics' | 'Diabetic' | 'Pain Relief' | 'Vitamins' | 'General';
+  description: string;
+  packSize: string;
+}
+
+export interface MedicineOrder {
+  id: string;
+  orderNumber: string;
+  items: {
+    medicine: Medicine;
+    quantity: number;
+  }[];
+  totalAmount: number;
+  status: 'Placed' | 'Prescription Verified' | 'Packed' | 'Out for Delivery' | 'Delivered';
+  orderDate: string;
+  estimatedDelivery: string;
+  deliveryAddress: string;
+  riderName?: string;
+  riderPhone?: string;
+  step: number;
+}
+
+export interface DiagnosticTest {
+  id: string;
+  title: string;
+  code: string;
+  category: string;
+  sampleType: string;
+  fastingRequired: boolean;
+  fastingHours?: number;
+  reportHours: number;
+  price: number;
+  originalPrice: number;
+  popular?: boolean;
+  parametersCount: number;
+  description: string;
+}
+
+export interface DiagnosticBooking {
+  id: string;
+  bookingRef: string;
+  test: DiagnosticTest;
+  patientName: string;
+  date: string;
+  timeSlot: string;
+  homeCollection: boolean;
+  address?: string;
+  status: 'Confirmed' | 'Phlebotomist Assigned' | 'Sample Collected' | 'Report Ready';
+  amount: number;
+}
+
+
